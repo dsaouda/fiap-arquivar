@@ -33,9 +33,9 @@ fun main(args: Array<String>) {
             readme.writeText("Professor: ${professor}")
         }
 
-        if (!disciplina.equals("Arquitetura e Desenvolvimento Java com SaaS ( Software as a Service )")) {
-            return@forEach
-        }
+        //if (!disciplina.equals("Arquitetura e Desenvolvimento Java com SaaS ( Software as a Service )")) {
+        //    return@forEach
+        //}
 
         println("\n")
         println("Disciplina: ${disciplina}")
