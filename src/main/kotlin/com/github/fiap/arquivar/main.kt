@@ -9,9 +9,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.system.exitProcess
 
-private val COOKIE = "nvgt46436=1507761626327_1_0|0_0|0; ASP.NET_SessionId=nir555e5w4y5funpmkzsyasb; jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJybSI6IjMxMzY0Iiwibm9tZSI6IkRpZWdvIEhlbnJpcXVlIFNvdXNhIFNhb3VkYSIsImV4cCI6MTUwNzc2NTIyOSwiaXNzIjoiUG9ydGFsQWx1bm8iLCJhdWQiOiJodHRwczovL3d3dy5maWFwLmNvbS5ici8iLCJuYmYiOjE1MDc3NjE2Mjl9.howKuaBElfs5LmdCCjqer95Ncshs5DscuoMCJF37Yvw; ultimoUsuarioFIAP=2CAG2AEG2CAG2F4G2D8G31; ASPSESSIONIDQUSRTRAB=CCOKPONCBOHANAPAAOLKDLCD; __utmt=1; __utma=40781493.1892115902.1507761626.1507761812.1507761812.1; __utmb=40781493.1.10.1507761812; __utmc=40781493; __utmz=40781493.1507761812.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); _ga=GA1.3.1892115902.1507761626; _gid=GA1.3.1431688763.1507761626; _uetsid=_uet945a6ee8; nvgc46436=0|0; nav46436=823b8850b0fa6c6bb2f41306309|2_285; _bizo_bzid=0584673d-a6de-4649-be71-6af91dc09b89; _bizo_cksm=4633D95652DE8732; _bizo_np_stats=155%3D575%2C"
+private var cookie: String? = null
 
 fun main(args: Array<String>) {
+    cookie = args[0].trim()
+
     val parse = requestEstrutura()
     val elements = parse.select("#curso185_2016turma28SCJ_2016all .i-apostilas-item")
 
@@ -133,12 +135,6 @@ private fun download(diretorioDisciplina: File, paramDownlaod: String, arquivo: 
             return
         }
     }
-
-    println("SITUACAO DIFERENTE")
-    println(diretorioDisciplina)
-    println(paramDownlaod)
-    println(arquivo)
-    exitProcess(0)
 }
 
 private fun downloadArquivo(codigo: String): ByteArray {
@@ -154,7 +150,7 @@ private fun downloadArquivo(codigo: String): ByteArray {
             .maxBodySize(0)
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", COOKIE)
+            .header("Cookie", cookie)
             .header("Upgrade-Insecure-Requests", "1")
             .data("Apostila", codigo)
 
@@ -171,7 +167,7 @@ private fun downloadLink(link: String): ByteArray {
             .maxBodySize(0)
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", COOKIE)
+            .header("Cookie", cookie)
             .header("Upgrade-Insecure-Requests", "1");
 
     return conn.execute().bodyAsBytes()
@@ -191,7 +187,7 @@ private fun fDownload(codigoA: String, codigoB: String): ByteArray {
             .maxBodySize(0)
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", COOKIE)
+            .header("Cookie", cookie)
             .header("Upgrade-Insecure-Requests", "1")
             .data("a", codigoA)
             .data("c", codigoB)
@@ -216,7 +212,7 @@ private fun requestArquivoPasta(data: List<String>?): Document {
             .header("X-Prototype-Version", "1.4.0")
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", COOKIE)
+            .header("Cookie", cookie)
 
     data?.forEach { d ->
         val valor = d.split("=")
@@ -236,7 +232,7 @@ private fun requestArquivo(data: List<String>?): Document {
             .header("X-Prototype-Version", "1.4.0")
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", COOKIE)
+            .header("Cookie", cookie)
 
     data?.forEach { d ->
         val valor = d.split("=")
@@ -254,6 +250,6 @@ private fun requestEstrutura(): Document = Jsoup.connect("https://www2.fiap.com.
             .header("X-Prototype-Version", "1.4.0")
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", COOKIE)
+            .header("Cookie", cookie)
             .execute()
             .parse()
