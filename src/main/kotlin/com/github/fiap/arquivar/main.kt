@@ -9,9 +9,10 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.system.exitProcess
 
+private val COOKIE = "nvgt46436=1507761626327_1_0|0_0|0; ASP.NET_SessionId=nir555e5w4y5funpmkzsyasb; jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJybSI6IjMxMzY0Iiwibm9tZSI6IkRpZWdvIEhlbnJpcXVlIFNvdXNhIFNhb3VkYSIsImV4cCI6MTUwNzc2NTIyOSwiaXNzIjoiUG9ydGFsQWx1bm8iLCJhdWQiOiJodHRwczovL3d3dy5maWFwLmNvbS5ici8iLCJuYmYiOjE1MDc3NjE2Mjl9.howKuaBElfs5LmdCCjqer95Ncshs5DscuoMCJF37Yvw; ultimoUsuarioFIAP=2CAG2AEG2CAG2F4G2D8G31; ASPSESSIONIDQUSRTRAB=CCOKPONCBOHANAPAAOLKDLCD; __utmt=1; __utma=40781493.1892115902.1507761626.1507761812.1507761812.1; __utmb=40781493.1.10.1507761812; __utmc=40781493; __utmz=40781493.1507761812.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); _ga=GA1.3.1892115902.1507761626; _gid=GA1.3.1431688763.1507761626; _uetsid=_uet945a6ee8; nvgc46436=0|0; nav46436=823b8850b0fa6c6bb2f41306309|2_285; _bizo_bzid=0584673d-a6de-4649-be71-6af91dc09b89; _bizo_cksm=4633D95652DE8732; _bizo_np_stats=155%3D575%2C"
+
 fun main(args: Array<String>) {
     val parse = requestEstrutura()
-
     val elements = parse.select("#curso185_2016turma28SCJ_2016all .i-apostilas-item")
 
     elements.forEach({ e ->
@@ -33,9 +34,9 @@ fun main(args: Array<String>) {
             readme.writeText("Professor: ${professor}")
         }
 
-        //if (!disciplina.equals("Arquitetura e Desenvolvimento Java com SaaS ( Software as a Service )")) {
-        //    return@forEach
-        //}
+        if (!disciplina.equals("Arquitetura e Desenvolvimento Java de Alta Disponibilidade para Cloud Computing")) {
+            //return@forEach
+        }
 
         println("\n")
         println("Disciplina: ${disciplina}")
@@ -76,9 +77,29 @@ private fun estrutura(span: Element, diretorioDisciplina: File) {
 
     if (spanArquivo.size > 0) {
         val paramDownlaod = spanArquivo.attr("onclick")
-        val arquivo = span.select(".i-apostilas-link-title").text()
-        val data = extrairData(span.select(".i-apostilas-link-subtitle").text())
-        download(diretorioDisciplina, paramDownlaod, arquivo, data)
+
+        when {
+            paramDownlaod.trim().length == 0 -> {
+                val a = spanArquivo.select("a")
+                val link = a.attr("href")
+                val arquivo = a.text()
+                val data = extrairData(span.select(".i-apostilas-link-subtitle").text())
+
+                println("download downloadLink ${arquivo} na data ${data}")
+
+                val file = File("${diretorioDisciplina.absolutePath}/${data} - ${arquivo}")
+                if (!file.exists()) {
+                    val conteudo = downloadLink(link)
+                    file.writeBytes(conteudo)
+                }
+            }
+
+            else -> {
+                val arquivo = span.select(".i-apostilas-link-title").text()
+                val data = extrairData(span.select(".i-apostilas-link-subtitle").text())
+                download(diretorioDisciplina, paramDownlaod, arquivo, data)
+            }
+        }
     }
 }
 
@@ -133,9 +154,25 @@ private fun downloadArquivo(codigo: String): ByteArray {
             .maxBodySize(0)
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", "nvgt46436=1507739207105_1_0|0_0|0; ASP.NET_SessionId=qstyqikabg0tfnlse1knp2rw; ultimoUsuarioFIAP=3C9G3A3G3C9G402G3DCG36; ASPSESSIONIDQUSRTRAB=BPPJPONCBIFFKAIHOGMCDIKP; _bizo_bzid=c8718bdb-1421-4f53-b714-8d052c1b3687; _bizo_cksm=B448B0A7C9DA2731; _bizo_np_stats=155%3D1704%2C; _ga=GA1.3.1474716694.1507739207; _gid=GA1.3.1158228551.1507739207; nvgc46436=0|0; nav46436=82356046178f494855d5f16c609|2_285; __utma=40781493.1474716694.1507739207.1507739530.1507742478.2; __utmb=40781493.3.10.1507742478; __utmc=40781493; __utmz=40781493.1507739530.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)")
+            .header("Cookie", COOKIE)
             .header("Upgrade-Insecure-Requests", "1")
             .data("Apostila", codigo)
+
+    return conn.execute().bodyAsBytes()
+}
+
+private fun downloadLink(link: String): ByteArray {
+
+    val conn = Jsoup.connect("https://www2.fiap.com.br/programas/${link}")
+            .method(Connection.Method.GET)
+            .referrer("https://www2.fiap.com.br/programas/login/alunos_2004/apostilas_2007/default.asp?titulo_secao=Apostilas")
+            .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
+            .ignoreContentType(true)
+            .maxBodySize(0)
+            .header("Host", "www2.fiap.com.br")
+            .header("Origin", "https://www2.fiap.com.br")
+            .header("Cookie", COOKIE)
+            .header("Upgrade-Insecure-Requests", "1");
 
     return conn.execute().bodyAsBytes()
 }
@@ -154,7 +191,7 @@ private fun fDownload(codigoA: String, codigoB: String): ByteArray {
             .maxBodySize(0)
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", "nvgt46436=1507739207105_1_0|0_0|0; ASP.NET_SessionId=qstyqikabg0tfnlse1knp2rw; ultimoUsuarioFIAP=3C9G3A3G3C9G402G3DCG36; ASPSESSIONIDQUSRTRAB=BPPJPONCBIFFKAIHOGMCDIKP; _bizo_bzid=c8718bdb-1421-4f53-b714-8d052c1b3687; _bizo_cksm=B448B0A7C9DA2731; _bizo_np_stats=155%3D1704%2C; _ga=GA1.3.1474716694.1507739207; _gid=GA1.3.1158228551.1507739207; nvgc46436=0|0; nav46436=82356046178f494855d5f16c609|2_285; __utma=40781493.1474716694.1507739207.1507739530.1507742478.2; __utmb=40781493.3.10.1507742478; __utmc=40781493; __utmz=40781493.1507739530.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)")
+            .header("Cookie", COOKIE)
             .header("Upgrade-Insecure-Requests", "1")
             .data("a", codigoA)
             .data("c", codigoB)
@@ -179,7 +216,7 @@ private fun requestArquivoPasta(data: List<String>?): Document {
             .header("X-Prototype-Version", "1.4.0")
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", "nvgt46436=1507739207105_1_0|0_0|0; ASP.NET_SessionId=qstyqikabg0tfnlse1knp2rw; ultimoUsuarioFIAP=3C9G3A3G3C9G402G3DCG36; ASPSESSIONIDQUSRTRAB=BPPJPONCBIFFKAIHOGMCDIKP; _bizo_bzid=c8718bdb-1421-4f53-b714-8d052c1b3687; _bizo_cksm=B448B0A7C9DA2731; _bizo_np_stats=155%3D1704%2C; _ga=GA1.3.1474716694.1507739207; _gid=GA1.3.1158228551.1507739207; nvgc46436=0|0; nav46436=82356046178f494855d5f16c609|2_285; __utma=40781493.1474716694.1507739207.1507739530.1507742478.2; __utmb=40781493.3.10.1507742478; __utmc=40781493; __utmz=40781493.1507739530.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)")
+            .header("Cookie", COOKIE)
 
     data?.forEach { d ->
         val valor = d.split("=")
@@ -199,7 +236,7 @@ private fun requestArquivo(data: List<String>?): Document {
             .header("X-Prototype-Version", "1.4.0")
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", "nvgt46436=1507739207105_1_0|0_0|0; ASP.NET_SessionId=qstyqikabg0tfnlse1knp2rw; ultimoUsuarioFIAP=3C9G3A3G3C9G402G3DCG36; ASPSESSIONIDQUSRTRAB=BPPJPONCBIFFKAIHOGMCDIKP; _bizo_bzid=c8718bdb-1421-4f53-b714-8d052c1b3687; _bizo_cksm=B448B0A7C9DA2731; _bizo_np_stats=155%3D1704%2C; _ga=GA1.3.1474716694.1507739207; _gid=GA1.3.1158228551.1507739207; nvgc46436=0|0; nav46436=82356046178f494855d5f16c609|2_285; __utma=40781493.1474716694.1507739207.1507739530.1507742478.2; __utmb=40781493.3.10.1507742478; __utmc=40781493; __utmz=40781493.1507739530.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)")
+            .header("Cookie", COOKIE)
 
     data?.forEach { d ->
         val valor = d.split("=")
@@ -217,6 +254,6 @@ private fun requestEstrutura(): Document = Jsoup.connect("https://www2.fiap.com.
             .header("X-Prototype-Version", "1.4.0")
             .header("Host", "www2.fiap.com.br")
             .header("Origin", "https://www2.fiap.com.br")
-            .header("Cookie", "nvgt46436=1507739207105_1_0|0_0|0; ASP.NET_SessionId=qstyqikabg0tfnlse1knp2rw; ultimoUsuarioFIAP=3C9G3A3G3C9G402G3DCG36; ASPSESSIONIDQUSRTRAB=BPPJPONCBIFFKAIHOGMCDIKP; _bizo_bzid=c8718bdb-1421-4f53-b714-8d052c1b3687; _bizo_cksm=B448B0A7C9DA2731; _bizo_np_stats=155%3D1704%2C; _ga=GA1.3.1474716694.1507739207; _gid=GA1.3.1158228551.1507739207; nvgc46436=0|0; nav46436=82356046178f494855d5f16c609|2_285; __utma=40781493.1474716694.1507739207.1507739530.1507742478.2; __utmb=40781493.3.10.1507742478; __utmc=40781493; __utmz=40781493.1507739530.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)")
+            .header("Cookie", COOKIE)
             .execute()
             .parse()
