@@ -1,4 +1,4 @@
-package com.github.fiap.arquivar
+package com.github.fiap.hack.apostila
 
 import org.jsoup.Connection
 import org.jsoup.Jsoup
