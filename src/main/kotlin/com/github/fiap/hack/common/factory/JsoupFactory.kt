@@ -1,4 +1,4 @@
-package com.github.fiap.hack.apostila.factory
+package com.github.fiap.hack.common.factory
 import org.jsoup.Jsoup
 
 object JsoupFactory {
@@ -9,9 +9,18 @@ object JsoupFactory {
     const val BASE_URL = "https://www2.fiap.com.br"
 
     fun create(url: String, cookie: String) = Jsoup.connect(url)
-            .referrer(REFERER)
+            //.referrer(REFERER)
             .userAgent(USER_AGENT)
             .header("Host", HOST)
             .header("Origin", ORIGIN)
             .header("Cookie", cookie)
+
+    fun create(url: String) = Jsoup.connect(url)
+            //.referrer(REFERER)
+            .userAgent(USER_AGENT)
+            .ignoreContentType(true)
+            .maxBodySize(0)
+            .header("Host", HOST)
+            .header("Origin", ORIGIN)
+            .header("Cookie", cookie())
 }

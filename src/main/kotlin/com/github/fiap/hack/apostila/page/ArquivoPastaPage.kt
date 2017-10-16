@@ -1,9 +1,8 @@
 package com.github.fiap.hack.apostila.page
 
-import com.github.fiap.hack.apostila.factory.JsoupFactory
-import com.github.fiap.hack.apostila.factory.url
+import com.github.fiap.hack.common.factory.JsoupFactory
+import com.github.fiap.hack.common.factory.url
 import org.jsoup.Connection
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 class ArquivoPastaPage {
