@@ -22,5 +22,5 @@ object JsoupFactory {
             .maxBodySize(0)
             .header("Host", HOST)
             .header("Origin", ORIGIN)
-            .header("Cookie", cookie())
+            .header("Cookie", defaultCookie())
 }

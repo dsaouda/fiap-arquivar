@@ -2,10 +2,10 @@ package com.github.fiap.hack.common.factory
 
 private var cookieValue = "";
 
-fun cookie(): String {
+fun defaultCookie(): String {
     return cookieValue
 }
 
-fun cookie(value: String) {
+fun defaultCookie(value: String) {
     cookieValue = value
 }
