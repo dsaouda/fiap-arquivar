@@ -1,7 +1,7 @@
 package com.github.fiap.hack.apostila.page
 
-import com.github.fiap.hack.common.factory.JsoupFactory
-import com.github.fiap.hack.common.factory.url
+import com.github.fiap.hack.common.JsoupFactory
+import com.github.fiap.hack.common.url
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
 

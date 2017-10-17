@@ -1,4 +1,4 @@
-package com.github.fiap.hack.common.factory
+package com.github.fiap.hack.common
 import org.jsoup.Jsoup
 
 object JsoupFactory {

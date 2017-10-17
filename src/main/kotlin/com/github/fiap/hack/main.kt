@@ -1,5 +1,7 @@
 package com.github.fiap.hack
 
+import com.github.fiap.hack.common.defaultCookie
+import com.github.fiap.hack.common.defaultPath
 import org.apache.commons.cli.*
 
 
@@ -15,12 +17,12 @@ fun main(args: Array<String>) {
 
     val path = cli.getOptionValue("d")
     if (path.isNullOrEmpty().not()) {
-        com.github.fiap.hack.common.factory.defaultPath(path)
+        defaultPath(path)
     }
 
     val cookie = cli.getOptionValue("c")
     if (cookie.isNullOrEmpty().not()) {
-        com.github.fiap.hack.common.factory.defaultCookie(cookie)
+        defaultCookie(cookie)
     }
 
     when {
