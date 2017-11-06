@@ -16,7 +16,7 @@ Projeto destinado a alunos que desejam realizar download das apostilas de seu cu
 4. Dê um F5 na página;
 5. Clique no log da primeira página (Home por exemplo);
 6. Clique no Header
-7. Copie o valor do cookie (Tudo que vier depois do "Cookie: " - Essa imagem pode ajudar -> )
+7. Copie o valor do cookie (Tudo que vier depois do "Cookie: " - Essa imagem pode ajudar -> https://github.com/dsaouda/fiap-hack/blob/master/docs/cookie.png)
 
 ## download trabalhos (opção -t)
 
